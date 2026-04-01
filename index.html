@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .logo h1 { font-size: 24px; color: #1a1a1a; font-weight: 700; }
+    .logo p  { font-size: 14px; color: #666; margin-top: 4px; }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #111;
+      background: #fff;
+      transition: border-color 0.2s;
+      margin-bottom: 4px;
+    }
+    input:focus { outline: none; border-color: #2563eb; }
+
+    .field { margin-bottom: 18px; }
+
+    .error-msg {
+      font-size: 13px;
+      color: #dc2626;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 44px; }
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: #888;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .forgot {
+      text-align: right;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+    .forgot a { font-size: 13px; color: #2563eb; text-decoration: none; }
+    .forgot a:hover { text-decoration: underline; }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-login:hover { background: #1d4ed8; }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      display: none;
+      text-align: center;
+    }
+    .alert.success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .alert.danger  { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    .divider { text-align: center; color: #aaa; font-size: 13px; margin: 18px 0; }
+
+    .register { text-align: center; font-size: 14px; color: #444; }
+    .register a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    .register a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <h1>Welcome Back</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <div class="field">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your email" autocomplete="off" />
+      <div class="error-msg" id="emailError">Please enter a valid email address.</div>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="off" />
+        <button class="toggle-pw" id="togglePw" onclick="togglePassword()" type="button" title="Show/Hide password">👁</button>
+      </div>
+      <div class="error-msg" id="passwordError">Password is required.</div>
+    </div>
+
+    <div class="forgot">
+      <a href="forgot-password.html" id="forgotLink">Forgot Password?</a>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="handleLogin()">Sign In</button>
+
+    <div class="divider">— or —</div>
+    <div class="register">Don't have an account? <a href="register.html">Sign Up</a></div>
+  </div>
+
+  <script>
+    // Valid credentials for demo / testing
+    var VALID_EMAIL    = "admin@test.com";
+    var VALID_PASSWORD = "Admin@123";
+
+    var attempts = 0;
+    var locked   = false;
+
+    function handleLogin() {
+      if (locked) {
+        showAlert("danger", "Account locked after 5 failed attempts. Please try again later.");
+        return;
+      }
+
+      clearErrors();
+
+      var email    = document.getElementById("email").value.trim();
+      var password = document.getElementById("password").value;
+
+      var valid = true;
+
+      // TC005 — empty email
+      if (!email) {
+        showError("emailError", "Email is required.");
+        valid = false;
+      } else if (!isValidEmail(email)) {
+        // TC007 — invalid format
+        showError("emailError", "Please enter a valid email address.");
+        valid = false;
+      }
+
+      // TC006 — empty password
+      if (!password) {
+        showError("passwordError", "Password is required.");
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      // TC001 — valid credentials
+      if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+        attempts = 0;
+        showAlert("success", "Login successful! Redirecting to dashboard...");
+        setTimeout(function() {
+          document.getElementById("alertBox").innerHTML =
+            "✅ You are now on the dashboard. <a href='login.html' style='color:#15803d'>Log out</a>";
+        }, 1500);
+
+      } else {
+        // TC002 / TC003 — wrong credentials
+        attempts++;
+
+        if (attempts >= 5) {
+          // TC018 — account lock
+          locked = true;
+          document.getElementById("loginBtn").disabled = true;
+          document.getElementById("loginBtn").style.background = "#9ca3af";
+          showAlert("danger", "Account locked after 5 failed attempts.");
+        } else {
+          showAlert("danger", "Invalid email or password. Attempt " + attempts + " of 5.");
+        }
+      }
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function showError(id, msg) {
+      var el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = "block";
+    }
+
+    function clearErrors() {
+      document.getElementById("emailError").style.display    = "none";
+      document.getElementById("passwordError").style.display = "none";
+      document.getElementById("alertBox").style.display      = "none";
+    }
+
+    function showAlert(type, msg) {
+      var box = document.getElementById("alertBox");
+      box.className  = "alert " + type;
+      box.innerHTML  = msg;
+      box.style.display = "block";
+    }
+
+    // TC013 — password show/hide toggle
+    function togglePassword() {
+      var pw = document.getElementById("password");
+      pw.type = pw.type === "password" ? "text" : "password";
+    }
+
+    // TC015 — Enter key support
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") handleLogin();
+    });
+  </script>
+</body>
+</html>
