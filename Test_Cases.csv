@@ -1,0 +1,11 @@
+Test Case ID,Module,Title,Preconditions,Test Steps,Test Data,Expected Result,Actual Result,Status,Priority
+TC01,Login,Valid Login,user already registered ,Enter email & password,email: admin@test.com / password: Admin@123,user should be logged in,logged in,Pass,High
+TC02,Login,Invalid Password,user exists ,Enter wrong password,email: admin@test.com / password: wrongpass,should show error,shows invalid password,Pass,High
+TC03,Login,Invalid Email,User not registered,Enter wrong email,email: wrong@test.com / password: Admin@123,should show error,error displayed,Pass,High
+TC04,Validation,empty fields ,browser open ,Click Sign In,email: (empty) / password: (empty),should show validation message,no message shown,Fail,High
+TC05,Validation,empty email ,browser open,Enter password only,email: (empty) / password: Admin@123,should show email required message,shows password error only,Pass,High
+TC06,Validation,Empty Password,Browser open,Enter email only,email: admin@test.com / password: (empty),Should show password required message,Shows error,Pass,High
+TC07,Validation,Invalid Email Format,Browser open,Enter invalid email,email: admin.com / password: Admin@123,Should show invalid email format message,Shows error,Pass,Medium
+TC08,Security,SQL Injection,Browser open,Enter SQL query,email: ' OR 1=1 -- / password: any,Login should fail,Login failed,Pass,High
+TC09,Validation,Short Password,Browser open,Enter short password,email: admin@test.com / password: 123,Should show password length error,Shows error,Pass,Medium
+TC10,UI,Forgot Password Link,Browser open,Click Forgot Password,N/A,Should redirect to reset page,Redirect successful,Pass,Low

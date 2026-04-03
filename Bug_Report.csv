@@ -1,0 +1,6 @@
+Bug ID,Title,Steps to Reproduce,Expected Result,Actual Result,Severity,Priority,Environment
+BUG-001,Forgot Password link not working,1. Open login page 2. Click Forgot Password,User should be redirected to reset page,Nothing happens on click,High,High,Chrome / Windows 11
+BUG-002,Account Lock remove on page refresh,1. Enter wrong credentials 5 times 2. Refresh page,Account should remain locked,Account gets unlocked after refresh,Critical,High,Chrome / Windows 11
+BUG-003,"After Logi, Logout Button Not working",1. Login with valid credentials 2. Click logout,Should go back to login page,Error ,Critical,High,Chrome / Windows 11
+BUG-004,Signup Button not working,1 open loin page 2.click signup,Should open signup page,error,Critical,High,All browsers
+BUG-005,Password with extra space fails,1. Enter valid credentials 2. Add space in password,Should sign in,Login fails,High,High,Chrome / Windows 11
